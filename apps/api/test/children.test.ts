@@ -11,6 +11,8 @@ describe("children domain", () => {
   let db: ReturnType<typeof createDb>;
 
   beforeEach(() => {
+    process.env.PUBLIC_APP_URL = "http://localhost:5173";
+    process.env.SESSION_SECRET = "test-session-secret-with-at-least-32-chars";
     sqlite = new DatabaseSync(":memory:");
     sqlite.exec("PRAGMA foreign_keys = ON");
     bootstrapDatabase(sqlite);

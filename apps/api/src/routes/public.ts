@@ -2,10 +2,11 @@ import type { Hono } from "hono";
 
 import { InvalidIinFormatError, getPublicStatusByIin, getPublicStatusByToken } from "../domain/children.js";
 import type { AppDb } from "../db/client.js";
+import type { AppEnv } from "../http.js";
 
 const notFoundMessage = "Заявка не найдена или ссылка недействительна";
 
-export function registerPublicRoutes(app: Hono, db: AppDb) {
+export function registerPublicRoutes(app: Hono<AppEnv>, db: AppDb) {
   app.get("/api/public/status/:token", async (c) => {
     const token = c.req.param("token");
     const status = await getPublicStatusByToken(db, token);
@@ -37,4 +38,3 @@ export function registerPublicRoutes(app: Hono, db: AppDb) {
     }
   });
 }
-

@@ -22,6 +22,7 @@ export const children = sqliteTable(
     fullName: text("full_name").notNull(),
     iin: text("iin").notNull(),
     parentPhone: text("parent_phone").notNull(),
+    parentPhoneNormalized: text("parent_phone_normalized").notNull(),
     estimatedStartText: text("estimated_start_text"),
     status: text("status").notNull(),
     queuedAt: text("queued_at").notNull(),
@@ -38,6 +39,24 @@ export const children = sqliteTable(
     uniqueIndex("children_public_token_unique").on(table.publicToken),
     uniqueIndex("children_active_iin_unique").on(table.iin).where(sql`${table.archivedAt} is null`),
     index("children_queue_idx").on(table.archivedAt, table.status, table.queuedAt, table.id)
+  ]
+);
+
+export const employeeSessions = sqliteTable(
+  "employee_sessions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    employeeId: integer("employee_id")
+      .notNull()
+      .references(() => employees.id, { onDelete: "cascade" }),
+    sessionTokenHash: text("session_token_hash").notNull(),
+    expiresAt: text("expires_at").notNull(),
+    createdAt: text("created_at").notNull()
+  },
+  (table) => [
+    uniqueIndex("employee_sessions_token_hash_unique").on(table.sessionTokenHash),
+    index("employee_sessions_employee_id_idx").on(table.employeeId),
+    index("employee_sessions_expires_at_idx").on(table.expiresAt)
   ]
 );
 
@@ -62,8 +81,8 @@ export const auditEvents = sqliteTable("audit_events", {
 
 export const schema = {
   employees,
+  employeeSessions,
   children,
   notificationEvents,
   auditEvents
 };
-

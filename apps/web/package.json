@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -p tsconfig.json && vite build",
+    "dev": "vite --configLoader runner",
+    "build": "tsc -p tsconfig.json && vite build --configLoader runner",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -23,4 +23,3 @@
     "vite": "^7.0.0"
   }
 }
-

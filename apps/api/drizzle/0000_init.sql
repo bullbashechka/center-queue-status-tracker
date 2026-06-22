@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS children (
   full_name TEXT NOT NULL,
   iin TEXT NOT NULL,
   parent_phone TEXT NOT NULL,
+  parent_phone_normalized TEXT NOT NULL,
   estimated_start_text TEXT,
   status TEXT NOT NULL,
   queued_at TEXT NOT NULL,
@@ -30,6 +31,19 @@ CREATE TABLE IF NOT EXISTS children (
 CREATE UNIQUE INDEX IF NOT EXISTS children_public_token_unique ON children(public_token);
 CREATE UNIQUE INDEX IF NOT EXISTS children_active_iin_unique ON children(iin) WHERE archived_at IS NULL;
 CREATE INDEX IF NOT EXISTS children_queue_idx ON children(archived_at, status, queued_at, id);
+
+CREATE TABLE IF NOT EXISTS employee_sessions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  employee_id INTEGER NOT NULL,
+  session_token_hash TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS employee_sessions_token_hash_unique ON employee_sessions(session_token_hash);
+CREATE INDEX IF NOT EXISTS employee_sessions_employee_id_idx ON employee_sessions(employee_id);
+CREATE INDEX IF NOT EXISTS employee_sessions_expires_at_idx ON employee_sessions(expires_at);
 
 CREATE TABLE IF NOT EXISTS notification_events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,4 +64,3 @@ CREATE TABLE IF NOT EXISTS audit_events (
   FOREIGN KEY (child_id) REFERENCES children(id) ON DELETE SET NULL,
   FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL
 );
-

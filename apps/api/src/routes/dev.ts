@@ -1,9 +1,11 @@
 import type { Hono } from "hono";
+import { ZodError } from "zod";
 
 import { ChildConflictError, ChildNotFoundError, InvalidIinFormatError, archiveChild, createChild, findArchivedDuplicateByIin } from "../domain/children.js";
 import type { AppDb } from "../db/client.js";
+import type { AppEnv } from "../http.js";
 
-export function registerDevRoutes(app: Hono, db: AppDb) {
+export function registerDevRoutes(app: Hono<AppEnv>, db: AppDb) {
   app.post("/api/dev/children", async (c) => {
     const body = await c.req.json();
 
@@ -26,6 +28,10 @@ export function registerDevRoutes(app: Hono, db: AppDb) {
         return c.json({ message: error.message }, 409);
       }
 
+      if (error instanceof ZodError) {
+        return c.json({ message: error.issues[0]?.message ?? "Проверьте введённые данные." }, 400);
+      }
+
       throw error;
     }
   });
@@ -45,8 +51,11 @@ export function registerDevRoutes(app: Hono, db: AppDb) {
         return c.json({ message: error.message }, 404);
       }
 
+      if (error instanceof ZodError) {
+        return c.json({ message: error.issues[0]?.message ?? "Проверьте введённые данные." }, 400);
+      }
+
       throw error;
     }
   });
 }
-

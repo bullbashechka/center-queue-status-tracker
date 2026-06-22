@@ -1,10 +1,11 @@
 import type { Hono } from "hono";
 
-export function registerHealthRoutes(app: Hono) {
+import type { AppEnv } from "../http.js";
+
+export function registerHealthRoutes(app: Hono<AppEnv>) {
   app.get("/health", (c) =>
     c.json({
       status: "ok"
     })
   );
 }
-
