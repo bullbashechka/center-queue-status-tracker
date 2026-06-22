@@ -446,6 +446,68 @@ textarea {
   flex: 1 1 0;
 }
 
+.admin-tabs {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 4px;
+  border-radius: 8px;
+  background: #e6f1f4;
+  margin-bottom: 4px;
+}
+
+.admin-tab {
+  min-height: 44px;
+  border: none;
+  padding: 0 18px;
+  border-radius: 6px;
+  color: #2b7189;
+  background: transparent;
+  cursor: pointer;
+}
+
+.admin-tab--active {
+  color: #14546a;
+  background: #fff;
+  box-shadow: 0 10px 20px rgba(20, 84, 106, 0.08);
+}
+
+.admin-audit-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.admin-audit-item {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #f7fbfc;
+  border: 1px solid #d7e8ed;
+}
+
+.admin-audit-item strong {
+  color: #173847;
+}
+
+.admin-audit-meta {
+  font-size: 0.85rem;
+  color: #54707c;
+}
+
+.admin-audit-details {
+  font-size: 0.95rem;
+  color: #2b5563;
+}
+
+.admin-message-hint {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #54707c;
+}
+
 .admin-auth-shell {
   max-width: 760px;
 }

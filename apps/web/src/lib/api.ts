@@ -1,6 +1,7 @@
 import {
   adminChildDetailSchema,
   adminChildListResponseSchema,
+  auditEventListResponseSchema,
   changeChildStatusSchema,
   createChildSchema,
   employeeSessionSchema,
@@ -9,6 +10,7 @@ import {
   publicStatusSchema,
   type AdminChildDetail,
   type AdminChildListItem,
+  type AuditEventView,
   type ChildStatus,
   type EmployeeSession
 } from "@queue-tracker/shared";
@@ -244,8 +246,20 @@ export async function changeAdminChildStatus(input: {
   );
 }
 
+export async function fetchAdminChildAudit(childId: number): Promise<AuditEventView[]> {
+  const result = await requestWithoutBody(
+    `/api/admin/children/${childId}/audit`,
+    auditEventListResponseSchema,
+    {
+      credentials: "include"
+    }
+  );
+
+  return result.items;
+}
+
 export function buildPublicStatusUrl(token: string): string {
   return `${window.location.origin}/status/${token}`;
 }
 
-export type { AdminChildDetail, AdminChildListItem, EmployeeSession };
+export type { AdminChildDetail, AdminChildListItem, AuditEventView, EmployeeSession };

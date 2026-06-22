@@ -84,14 +84,18 @@ export const notificationEvents = sqliteTable("notification_events", {
   createdAt: text("created_at").notNull()
 });
 
-export const auditEvents = sqliteTable("audit_events", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  childId: integer("child_id").references(() => children.id, { onDelete: "set null" }),
-  employeeId: integer("employee_id").references(() => employees.id, { onDelete: "set null" }),
-  actionType: text("action_type").notNull(),
-  payloadJson: text("payload_json").notNull(),
-  createdAt: text("created_at").notNull()
-});
+export const auditEvents = sqliteTable(
+  "audit_events",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    childId: integer("child_id").references(() => children.id, { onDelete: "set null" }),
+    employeeId: integer("employee_id").references(() => employees.id, { onDelete: "set null" }),
+    actionType: text("action_type").notNull(),
+    payloadJson: text("payload_json").notNull(),
+    createdAt: text("created_at").notNull()
+  },
+  (table) => [index("audit_events_child_idx").on(table.childId, table.id)]
+);
 
 export const schema = {
   employees,

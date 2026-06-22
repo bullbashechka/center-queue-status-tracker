@@ -9,9 +9,11 @@ import {
   changeAdminChildStatus,
   createAdminChild,
   fetchAdminChild,
+  fetchAdminChildAudit,
   UnauthorizedError,
   updateAdminChild,
-  type AdminChildDetail
+  type AdminChildDetail,
+  type AuditEventView
 } from "../lib/api.js";
 
 type ChildFormState = {
@@ -40,6 +42,11 @@ export function AdminChildPage() {
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(!isCreateMode);
   const [isSaving, setIsSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<"card" | "history">("card");
+  const [auditItems, setAuditItems] = useState<AuditEventView[]>([]);
+  const [auditError, setAuditError] = useState<string | null>(null);
+  const [isAuditLoading, setIsAuditLoading] = useState(false);
+  const [auditLoaded, setAuditLoaded] = useState(false);
 
   useEffect(() => {
     if (isCreateMode) {
@@ -98,6 +105,58 @@ export function AdminChildPage() {
     };
   }, [childId, isCreateMode, location.pathname, location.search, navigate]);
 
+  useEffect(() => {
+    setAuditLoaded(false);
+    setAuditItems([]);
+    setAuditError(null);
+  }, [childId]);
+
+  useEffect(() => {
+    if (activeTab !== "history" || isCreateMode || !childId || auditLoaded) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    async function loadAudit() {
+      setIsAuditLoading(true);
+      setAuditError(null);
+
+      try {
+        const items = await fetchAdminChildAudit(Number(childId));
+
+        if (!isCancelled) {
+          setAuditItems(items);
+          setAuditLoaded(true);
+        }
+      } catch (requestError) {
+        if (isCancelled) {
+          return;
+        }
+
+        if (requestError instanceof UnauthorizedError) {
+          const nextPath = `${location.pathname}${location.search}`;
+          navigate(`/admin/login?next=${encodeURIComponent(nextPath)}`, { replace: true });
+          return;
+        }
+
+        setAuditError(
+          requestError instanceof Error ? requestError.message : "Не удалось загрузить историю."
+        );
+      } finally {
+        if (!isCancelled) {
+          setIsAuditLoading(false);
+        }
+      }
+    }
+
+    void loadAudit();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeTab, auditLoaded, childId, isCreateMode, location.pathname, location.search, navigate]);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSaving(true);
@@ -135,6 +194,7 @@ export function AdminChildPage() {
         parentPhone: updated.parentPhone,
         estimatedStartText: updated.estimatedStartText ?? ""
       });
+      setAuditLoaded(false);
     } catch (requestError) {
       if (requestError instanceof UnauthorizedError) {
         const nextPath = `${location.pathname}${location.search}`;
@@ -236,6 +296,7 @@ export function AdminChildPage() {
         estimatedStartText: updated.estimatedStartText ?? ""
       });
       setRollbackStatus("");
+      setAuditLoaded(false);
     } catch (requestError) {
       if (requestError instanceof UnauthorizedError) {
         const nextPath = `${location.pathname}${location.search}`;
@@ -296,7 +357,58 @@ export function AdminChildPage() {
         </section>
       ) : null}
 
-      <div className="admin-detail-grid">
+      {!isCreateMode ? (
+        <div className="admin-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "card"}
+            className={`admin-tab${activeTab === "card" ? " admin-tab--active" : ""}`}
+            onClick={() => setActiveTab("card")}
+          >
+            Карточка
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "history"}
+            className={`admin-tab${activeTab === "history" ? " admin-tab--active" : ""}`}
+            onClick={() => setActiveTab("history")}
+          >
+            История
+          </button>
+        </div>
+      ) : null}
+
+      {activeTab === "history" && !isCreateMode ? (
+        <section className="panel">
+          <div className="eyebrow">Журнал действий</div>
+          <h2>История изменений</h2>
+
+          {isAuditLoading ? <p>Загружаем историю...</p> : null}
+          {auditError ? <p>{auditError}</p> : null}
+
+          {!isAuditLoading && !auditError && auditItems.length === 0 ? (
+            <p>Действий пока нет.</p>
+          ) : null}
+
+          {!isAuditLoading && !auditError && auditItems.length > 0 ? (
+            <ul className="admin-audit-list">
+              {auditItems.map((item) => (
+                <li key={item.id} className="admin-audit-item">
+                  <strong>{item.actionLabel}</strong>
+                  <span className="admin-audit-meta">
+                    {item.createdAtLabel} · {item.employeeName ?? "—"}
+                  </span>
+                  {item.details ? <span className="admin-audit-details">{item.details}</span> : null}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </section>
+      ) : null}
+
+      <div className="admin-detail-grid" hidden={activeTab !== "card" && !isCreateMode}>
         <section className="panel">
           <div className="eyebrow">{isCreateMode ? "Новая запись" : "Карточка ребёнка"}</div>
           <h2>{isCreateMode ? "Добавить ребёнка" : child?.fullName}</h2>
@@ -443,6 +555,10 @@ export function AdminChildPage() {
             >
               Скопировать текст сообщения
             </button>
+
+            <p className="admin-message-hint">
+              Сообщения о продвижении очереди отправляйте после 18:00.
+            </p>
 
             <p className={`message${copyMessage ? " message--visible" : ""}`}>{copyMessage ?? " "}</p>
           </section>

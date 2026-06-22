@@ -69,7 +69,8 @@ const schemaStatements = [
     created_at TEXT NOT NULL,
     FOREIGN KEY (child_id) REFERENCES children(id) ON DELETE SET NULL,
     FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL
-  )`
+  )`,
+  "CREATE INDEX IF NOT EXISTS audit_events_child_idx ON audit_events(child_id, id)"
 ];
 
 export function bootstrapDatabase(sqlite: DatabaseSync): void {

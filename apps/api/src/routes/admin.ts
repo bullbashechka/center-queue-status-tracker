@@ -1,6 +1,7 @@
 import {
   adminChildListModeSchema,
   adminChildListResponseSchema,
+  auditEventListResponseSchema,
   changeChildStatusSchema,
   childStatusSchema,
   createChildSchema,
@@ -19,6 +20,7 @@ import {
   getAdminChildById,
   InvalidStatusTransitionError,
   listAdminChildren,
+  listChildAuditEvents,
   StaleChildRecordError,
   updateChild
 } from "../domain/children.js";
@@ -60,6 +62,19 @@ export function registerAdminRoutes(app: Hono<AppEnv>, db: AppDb) {
     }
 
     return c.json(child);
+  });
+
+  app.get("/api/admin/children/:id/audit", async (c) => {
+    const childId = Number(c.req.param("id"));
+    const child = await getAdminChildById(db, childId);
+
+    if (!child) {
+      return c.json({ message: "Запись не найдена." }, 404);
+    }
+
+    const items = await listChildAuditEvents(db, childId);
+
+    return c.json(auditEventListResponseSchema.parse({ items }));
   });
 
   app.post("/api/admin/children", async (c) => {
