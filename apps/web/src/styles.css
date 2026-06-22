@@ -233,6 +233,34 @@ textarea {
   box-shadow: 0 0 0 6px rgba(43, 168, 201, 0.18);
 }
 
+.queue-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 24px;
+}
+
+.queue-summary > div {
+  padding: 18px;
+  border: 1px solid #d7e8ed;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(43, 168, 201, 0.12), rgba(255, 255, 255, 0.86));
+}
+
+.queue-summary__label {
+  display: block;
+  margin-bottom: 6px;
+  color: #54707c;
+  font-size: 0.9rem;
+}
+
+.queue-summary strong {
+  display: block;
+  color: #14546a;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.15;
+}
+
 .status-grid {
   margin: 0;
   display: grid;
@@ -251,6 +279,14 @@ textarea {
   margin-top: 18px;
   color: #14546a;
   text-decoration: none;
+}
+
+.panel-note {
+  color: #54707c;
+}
+
+.status-retry-button {
+  margin-top: 18px;
 }
 
 .admin-shell {
@@ -432,6 +468,7 @@ textarea {
   }
 
   .grid,
+  .queue-summary,
   .status-grid,
   .admin-metrics,
   .admin-detail-grid {

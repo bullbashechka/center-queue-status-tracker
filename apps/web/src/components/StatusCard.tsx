@@ -4,7 +4,25 @@ type StatusCardProps = {
   status: PublicStatusView;
 };
 
+function formatFamiliesAhead(count: number): string {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+
+  if (mod10 === 1 && mod100 !== 11) {
+    return `${count} семья`;
+  }
+
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
+    return `${count} семьи`;
+  }
+
+  return `${count} семей`;
+}
+
 export function StatusCard({ status }: StatusCardProps) {
+  const showQueue = status.status !== "enrolled" && status.queuePosition !== null;
+  const familiesAhead = status.familiesAhead ?? 0;
+
   return (
     <section className="panel panel-status">
       <div className="eyebrow">Персональный статус</div>
@@ -26,25 +44,31 @@ export function StatusCard({ status }: StatusCardProps) {
         })}
       </ol>
 
+      {showQueue ? (
+        <section className="queue-summary" aria-label="Позиция в очереди">
+          <div>
+            <span className="queue-summary__label">Сейчас вы</span>
+            <strong>№{status.queuePosition} в очереди</strong>
+          </div>
+          <div>
+            <span className="queue-summary__label">Перед вами</span>
+            <strong>{formatFamiliesAhead(familiesAhead)}</strong>
+          </div>
+        </section>
+      ) : null}
+
       <dl className="status-grid">
         <div>
           <dt>Текущий этап</dt>
           <dd>{status.statusLabel}</dd>
         </div>
-        <div>
-          <dt>Номер в очереди</dt>
-          <dd>{status.queuePosition ?? "Не отображается"}</dd>
-        </div>
-        <div>
-          <dt>Семей впереди</dt>
-          <dd>{status.familiesAhead ?? "Не отображается"}</dd>
-        </div>
-        <div>
-          <dt>Ориентировочный срок</dt>
-          <dd>{status.estimatedStartText ?? "Пока не указан"}</dd>
-        </div>
+        {status.estimatedStartText ? (
+          <div>
+            <dt>Ориентировочный срок</dt>
+            <dd>{status.estimatedStartText}</dd>
+          </div>
+        ) : null}
       </dl>
     </section>
   );
 }
-

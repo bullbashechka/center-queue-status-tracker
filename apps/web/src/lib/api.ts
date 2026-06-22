@@ -25,6 +25,13 @@ export class UnauthorizedError extends Error {
   }
 }
 
+export class ApiRequestError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message);
+    this.name = "ApiRequestError";
+  }
+}
+
 async function requestJson<T>(
   path: string,
   init: RequestInit,
@@ -39,7 +46,7 @@ async function requestJson<T>(
       throw new UnauthorizedError(error.message);
     }
 
-    throw new Error(error.message);
+    throw new ApiRequestError(error.message, response.status);
   }
 
   return parser.parse(await response.json());
