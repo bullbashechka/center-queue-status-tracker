@@ -1,5 +1,6 @@
 import {
   archiveChildSchema,
+  auditActionLabels,
   changeChildStatusSchema,
   childStatusLabels,
   childStatusValues,
@@ -10,6 +11,7 @@ import {
   type AdminChildListItem,
   type AdminChildListMode,
   type ArchiveChildInput,
+  type AuditEventView,
   type ChangeChildStatusInput,
   type ChildStatus,
   type CreateChildInput,
@@ -20,7 +22,7 @@ import {
 
 import { getConfig } from "../config.js";
 import { runInTransaction, type AppDb } from "../db/client.js";
-import { nowUtcIso } from "../lib/time.js";
+import { centerLocalDate, formatCenterDateTime, nowUtcIso } from "../lib/time.js";
 import { generatePublicToken } from "../lib/token.js";
 import { getQueueSnapshotForChild } from "./queue.js";
 
@@ -231,6 +233,75 @@ export async function getAdminChildById(db: AppDb, childId: number): Promise<Adm
 
   const queue = await getQueueSnapshotForChild(db, child);
   return mapChildToAdminDetail(child, queue.queuePosition, queue.familiesAhead, getLastNotificationMessage(db, child));
+}
+
+type AuditEventRow = {
+  id: number;
+  actionType: string;
+  payloadJson: string;
+  employeeName: string | null;
+  createdAt: string;
+};
+
+export async function listChildAuditEvents(db: AppDb, childId: number): Promise<AuditEventView[]> {
+  const rows = db.sqlite
+    .prepare(
+      `select
+        a.id as id,
+        a.action_type as actionType,
+        a.payload_json as payloadJson,
+        e.display_name as employeeName,
+        a.created_at as createdAt
+      from audit_events a
+      left join employees e on e.id = a.employee_id
+      where a.child_id = ?
+      order by a.id desc
+      limit 50`
+    )
+    .all(childId) as AuditEventRow[];
+
+  const timeZone = getConfig().CENTER_TIMEZONE;
+
+  return rows.map((row) => ({
+    id: row.id,
+    actionLabel: auditActionLabels[row.actionType] ?? row.actionType,
+    details: buildAuditDetails(row.actionType, row.payloadJson),
+    employeeName: row.employeeName,
+    createdAtLabel: formatCenterDateTime(row.createdAt, timeZone)
+  }));
+}
+
+function buildAuditDetails(actionType: string, payloadJson: string): string | null {
+  const payload = JSON.parse(payloadJson) as Record<string, unknown>;
+
+  if (actionType === "child_status_changed" || actionType === "child_status_reverted") {
+    const fromLabel = childStatusLabels[payload.fromStatus as ChildStatus];
+    const toLabel = childStatusLabels[payload.toStatus as ChildStatus];
+
+    if (fromLabel && toLabel) {
+      return `${fromLabel} → ${toLabel}`;
+    }
+
+    return null;
+  }
+
+  if (actionType === "child_archived") {
+    const reason = typeof payload.archiveReason === "string" ? payload.archiveReason.trim() : "";
+    return reason ? `Причина: ${reason}` : null;
+  }
+
+  if (actionType === "child_updated") {
+    const previousIin = typeof payload.previousIin === "string" ? payload.previousIin : null;
+    const nextIin = typeof payload.nextIin === "string" ? payload.nextIin : null;
+
+    if (previousIin && nextIin && previousIin !== nextIin) {
+      return `ИИН: ${previousIin} → ${nextIin}`;
+    }
+
+    return null;
+  }
+
+  return null;
 }
 
 export async function updateChild(
@@ -649,11 +720,63 @@ function insertQueuePositionChangeEvents(
       continue;
     }
 
-    insertNotificationEvent(db, childId, "queue_position_changed", {
-      previousPosition: previousPosition ?? null,
-      nextPosition
-    }, timestamp);
+    upsertDailyQueuePositionEvent(db, childId, previousPosition ?? null, nextPosition, timestamp);
   }
+}
+
+type DailyQueueEventRow = {
+  id: number;
+  payloadJson: string;
+  createdAt: string;
+};
+
+// Хранит не более одной записи о продвижении очереди в сутки на ребёнка
+// (по часовому поясу центра): за день обновляется актуальная позиция, а не
+// создаётся отдельное событие на каждое движение.
+function upsertDailyQueuePositionEvent(
+  db: AppDb,
+  childId: number,
+  previousPosition: number | null,
+  nextPosition: number,
+  timestamp: string
+): void {
+  const latest = db.sqlite
+    .prepare(
+      `select id, payload_json as payloadJson, created_at as createdAt
+       from notification_events
+       where child_id = ? and event_type = 'queue_position_changed'
+       order by id desc
+       limit 1`
+    )
+    .get(childId) as DailyQueueEventRow | undefined;
+
+  const timeZone = getConfig().CENTER_TIMEZONE;
+
+  if (latest && centerLocalDate(latest.createdAt, timeZone) === centerLocalDate(timestamp, timeZone)) {
+    const existingPayload = JSON.parse(latest.payloadJson) as { previousPosition?: number | null };
+
+    db.sqlite
+      .prepare(
+        `update notification_events
+         set payload_json = ?, created_at = ?
+         where id = ?`
+      )
+      .run(
+        JSON.stringify({
+          previousPosition: existingPayload.previousPosition ?? null,
+          nextPosition
+        }),
+        timestamp,
+        latest.id
+      );
+
+    return;
+  }
+
+  insertNotificationEvent(db, childId, "queue_position_changed", {
+    previousPosition,
+    nextPosition
+  }, timestamp);
 }
 
 function insertNotificationEvent(

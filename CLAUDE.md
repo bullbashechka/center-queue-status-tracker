@@ -66,6 +66,9 @@ Route groups (`app.ts`): `auth` (`/api/auth/*`), `public` (`/api/public/*`, unau
 - **Optimistic concurrency:** mutating endpoints require `expectedUpdatedAt`; a mismatch with the row's current `updatedAt` throws `StaleChildRecordError` → HTTP 409. Preserve this when adding mutations.
 - **Status transitions** (`assertAllowedStatusTransition`): the four stages are ordered (`documents_accepted → diagnostics_passed → waiting_for_enrollment → enrolled`). You may move forward exactly one step or backward any number; skipping forward is rejected.
 - Mutations write `audit_events` (who/what) and `notification_events` (the message a parent would receive); `notification_events` also drives the "last notification message" shown in admin. Keep these writes when adding mutations.
+- **Notification rendering is server-side:** the API never stores rendered strings, only event rows with a `payload_json`; the Russian text is built on read (`getLastNotificationMessage`) from the latest event + the child's status URL. Same for audit lines (`listChildAuditEvents`): `auditActionLabels` in shared + `payload_json` → rendered `actionLabel`/`details`/`employeeName`/`createdAtLabel`, with time formatted via `CENTER_TIMEZONE` (`lib/time.ts`).
+- **One queue-advance notification per child per day:** `queue_position_changed` events are upserted, not appended — `upsertDailyQueuePositionEvent` rewrites the day's existing row (compared via `centerLocalDate` in `CENTER_TIMEZONE`) so only one current message per child per calendar day exists. Other event types are always appended.
+- **Audit history** is read-only via `GET /api/admin/children/:id/audit` (session-gated), surfaced as the "История" tab on the admin child card. Copying the public link/message is intentionally *not* audited.
 
 ### Auth
 

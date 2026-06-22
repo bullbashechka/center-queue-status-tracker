@@ -119,6 +119,30 @@ export const adminChildListResponseSchema = z.object({
 
 export type AdminChildListResponse = z.infer<typeof adminChildListResponseSchema>;
 
+export const auditActionLabels: Record<string, string> = {
+  child_created: "Ребёнок добавлен",
+  child_updated: "Данные отредактированы",
+  child_archived: "Перемещён в архив",
+  child_status_changed: "Статус изменён",
+  child_status_reverted: "Откат статуса"
+};
+
+export const auditEventSchema = z.object({
+  id: z.number().int().positive(),
+  actionLabel: z.string().min(1),
+  details: z.string().nullable(),
+  employeeName: z.string().nullable(),
+  createdAtLabel: z.string().min(1)
+});
+
+export type AuditEventView = z.infer<typeof auditEventSchema>;
+
+export const auditEventListResponseSchema = z.object({
+  items: z.array(auditEventSchema)
+});
+
+export type AuditEventListResponse = z.infer<typeof auditEventListResponseSchema>;
+
 export const publicStatusSchema = z.object({
   id: z.number().int().positive(),
   token: z.string().min(1),
