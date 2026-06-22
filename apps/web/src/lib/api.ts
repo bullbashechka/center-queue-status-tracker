@@ -5,6 +5,7 @@ import {
   createChildSchema,
   employeeSessionSchema,
   loginInputSchema,
+  publicSearchResultSchema,
   publicStatusSchema,
   type AdminChildDetail,
   type AdminChildListItem,
@@ -67,7 +68,10 @@ export async function fetchStatusByToken(token: string) {
 export async function searchStatusByIin(iin: string) {
   return requestWithoutBody(
     `/api/public/search?iin=${encodeURIComponent(iin)}`,
-    publicStatusSchema
+    publicSearchResultSchema,
+    {
+      credentials: "include"
+    }
   );
 }
 
