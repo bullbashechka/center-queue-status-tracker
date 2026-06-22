@@ -1,0 +1,30 @@
+{
+  "name": "center-queue-status-tracker",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.1.38",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace @queue-tracker/api\" \"npm run dev --workspace @queue-tracker/web\"",
+    "dev:api": "npm run dev --workspace @queue-tracker/api",
+    "dev:web": "npm run dev --workspace @queue-tracker/web",
+    "build": "npm run build --workspace @queue-tracker/shared && npm run build --workspace @queue-tracker/api && npm run build --workspace @queue-tracker/web",
+    "lint": "npm run lint --workspace @queue-tracker/shared && npm run lint --workspace @queue-tracker/api && npm run lint --workspace @queue-tracker/web",
+    "typecheck": "npm run typecheck --workspace @queue-tracker/shared && npm run typecheck --workspace @queue-tracker/api && npm run typecheck --workspace @queue-tracker/web",
+    "test": "npm run test --workspace @queue-tracker/api"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "concurrently": "^9.2.0",
+    "eslint": "^9.29.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.2.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.35.1"
+  }
+}
+

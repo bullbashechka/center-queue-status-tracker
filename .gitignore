@@ -1,0 +1,28 @@
+node_modules/
+dist/
+build/
+.vite/
+.turbo/
+coverage/
+*.tsbuildinfo
+data/*.db
+data/*.db-*
+.env
+*.log
+
+# TypeScript emits these when web typecheck/build is run without noEmit/outDir.
+/apps/web/vite.config.js
+/apps/web/src/**/*.js
+
+# Accidental root files created by pasted command/test output.
+/allows
+/build
+/computes
+/creates
+/keeps
+/npm
+/rejects
+/returns
+/test
+/tsc
+/vitest
