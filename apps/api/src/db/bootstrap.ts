@@ -44,6 +44,14 @@ const schemaStatements = [
   "CREATE UNIQUE INDEX IF NOT EXISTS employee_sessions_token_hash_unique ON employee_sessions(session_token_hash)",
   "CREATE INDEX IF NOT EXISTS employee_sessions_employee_id_idx ON employee_sessions(employee_id)",
   "CREATE INDEX IF NOT EXISTS employee_sessions_expires_at_idx ON employee_sessions(expires_at)",
+  `CREATE TABLE IF NOT EXISTS search_attempts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id TEXT NOT NULL,
+    ip_address TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  )`,
+  "CREATE INDEX IF NOT EXISTS search_attempts_device_idx ON search_attempts(device_id, created_at)",
+  "CREATE INDEX IF NOT EXISTS search_attempts_ip_idx ON search_attempts(ip_address, created_at)",
   `CREATE TABLE IF NOT EXISTS notification_events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     child_id INTEGER NOT NULL,

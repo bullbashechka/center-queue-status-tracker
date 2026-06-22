@@ -60,6 +60,20 @@ export const employeeSessions = sqliteTable(
   ]
 );
 
+export const searchAttempts = sqliteTable(
+  "search_attempts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    deviceId: text("device_id").notNull(),
+    ipAddress: text("ip_address").notNull(),
+    createdAt: text("created_at").notNull()
+  },
+  (table) => [
+    index("search_attempts_device_idx").on(table.deviceId, table.createdAt),
+    index("search_attempts_ip_idx").on(table.ipAddress, table.createdAt)
+  ]
+);
+
 export const notificationEvents = sqliteTable("notification_events", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   childId: integer("child_id")
@@ -82,6 +96,7 @@ export const auditEvents = sqliteTable("audit_events", {
 export const schema = {
   employees,
   employeeSessions,
+  searchAttempts,
   children,
   notificationEvents,
   auditEvents

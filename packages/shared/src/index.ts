@@ -132,6 +132,12 @@ export const publicStatusSchema = z.object({
 
 export type PublicStatusView = z.infer<typeof publicStatusSchema>;
 
+export const publicSearchResultSchema = z.object({
+  token: z.string().min(1)
+});
+
+export type PublicSearchResult = z.infer<typeof publicSearchResultSchema>;
+
 export function normalizeIin(value: string): string {
   return value.replace(/[\s-]+/g, "");
 }
