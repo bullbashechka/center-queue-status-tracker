@@ -89,6 +89,16 @@ npm run test --workspace @queue-tracker/api -- -t "computes queue positions"
 | `SESSION_SECRET`       | Секрет сессий, **минимум 32 символа** — иначе API не стартует |
 | `SESSION_COOKIE_NAME`  | Имя cookie сессии                                       |
 | `VITE_API_BASE_URL`    | Базовый URL API для веб-клиента                         |
+| `ENABLE_DEV_ROUTES`    | `true` включает тестовые `/api/dev/*` (по умолч. выкл.) |
+
+## Выпуск и эксплуатация
+
+- **Продакшн-сборка:** `npm run build` (порядок shared → api → web).
+- **Запуск API:** Node 22+, переменные окружения из таблицы выше; `SESSION_SECRET` ≥32 символов обязателен.
+- **Dev-маршруты:** `/api/dev/*` — тестовые помощники без авторизации. В проде **не выставляйте** `ENABLE_DEV_ROUTES`; по умолчанию они отключены.
+- **Бэкап данных:** состояние хранится в одном файле SQLite (`DATABASE_URL`, по умолчанию `./data/app.db`) — включите его в регулярный бэкап.
+- **Создание сотрудников:** только через `npm run setup:employee` (публичной регистрации нет).
+- **Приёмка перед релизом:** пройдите [docs/RELEASE_CHECKLIST.md](./docs/RELEASE_CHECKLIST.md).
 
 ## Архитектура
 
