@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "setup:employee": "tsx src/scripts/setupEmployee.ts",
+    "dev": "tsx watch --env-file=../../.env src/index.ts",
+    "setup:employee": "tsx --env-file=../../.env src/scripts/setupEmployee.ts",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",

@@ -41,9 +41,14 @@ npm run dev                 # API на :3001 + веб на :5173
 
 После запуска:
 
-- админка — http://localhost:5173/admin
+- админка — http://localhost:5173/admin (вход — http://localhost:5173/admin/login,
+  также доступен по иконке-шестерёнке в правом верхнем углу публичных страниц)
 - публичный поиск по ИИН — http://localhost:5173/search
 - персональная страница статуса — http://localhost:5173/status/:token
+
+> Скрипты `dev` и `setup:employee` в `apps/api` подхватывают корневой `.env`
+> автоматически через нативный флаг Node `--env-file`, поэтому достаточно один раз
+> скопировать `.env.example` в `.env`.
 
 ## Команды
 

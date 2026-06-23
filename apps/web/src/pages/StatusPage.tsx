@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import type { PublicStatusView } from "@queue-tracker/shared";
 
+import { AdminEntryLink } from "../components/AdminEntryLink.js";
 import { StatusCard } from "../components/StatusCard.js";
 import { ApiRequestError, fetchStatusByToken } from "../lib/api.js";
 
@@ -53,6 +54,7 @@ export function StatusPage() {
 
   return (
     <main className="shell">
+      <AdminEntryLink />
       <section className="hero">
         <div className="eyebrow">Страница статуса</div>
         <h1>Актуальная информация по очереди</h1>

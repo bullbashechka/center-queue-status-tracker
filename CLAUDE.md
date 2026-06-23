@@ -36,7 +36,7 @@ Create/update an admin employee (no public registration exists):
 npm run setup:employee --workspace @queue-tracker/api -- --login admin --name "Администратор" --password "secret"
 ```
 
-Copy `.env.example` to `.env` before running. `SESSION_SECRET` must be ≥32 chars or the API refuses to boot (validated by Zod in `apps/api/src/config.ts`).
+Copy `.env.example` to `.env` before running. `SESSION_SECRET` must be ≥32 chars or the API refuses to boot (validated by Zod in `apps/api/src/config.ts`). The API has no `dotenv`; `config.ts` reads `process.env` directly, so the `dev` and `setup:employee` scripts load the root `.env` via Node's native `--env-file=../../.env` flag (see `apps/api/package.json`). Running those scripts another way (or adding a new script that needs config) requires passing `--env-file` yourself.
 
 ## Architecture
 
@@ -77,6 +77,8 @@ Login verifies a scrypt password hash (`lib/security.ts`), then stores a session
 ### Web client
 
 `src/lib/api.ts` is the only place that talks to the API: every call goes through `requestJson`, sends `credentials: "include"` for cookie auth, and **parses every response with the shared Zod schema**. It maps 401 → `UnauthorizedError` and other failures → `ApiRequestError`. Routes are declared in `src/app.tsx`; `pages/AdminLayout.tsx` is the auth-guarded shell for `/admin/*`.
+
+The public pages (`SearchPage`, `StatusPage`, `NotFoundPage`) render `components/AdminEntryLink.tsx` — a fixed-position gear icon (top-right) linking to `/admin/login`, the only staff-facing entry point from the public side. It is intentionally **not** rendered inside `/admin/*`.
 
 ## Conventions
 

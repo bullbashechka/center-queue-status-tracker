@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 
+import { AdminEntryLink } from "../components/AdminEntryLink.js";
+
 export function NotFoundPage() {
   return (
     <main className="shell">
+      <AdminEntryLink />
       <section className="panel not-found">
         <div className="eyebrow">404</div>
         <h1>Страница не найдена</h1>

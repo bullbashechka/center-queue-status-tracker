@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { AdminEntryLink } from "../components/AdminEntryLink.js";
 import { searchStatusByIin } from "../lib/api.js";
 
 export function SearchPage() {
@@ -27,6 +28,7 @@ export function SearchPage() {
 
   return (
     <main className="shell">
+      <AdminEntryLink />
       <section className="hero hero-search">
         <div className="eyebrow">Публичный доступ</div>
         <h1>Проверьте статус ребёнка по ИИН</h1>
