@@ -55,7 +55,7 @@ export function StatusPage() {
   return (
     <main className="shell">
       <AdminEntryLink />
-      <section className="hero">
+      <section className="hero hero--compact">
         <div className="eyebrow">Страница статуса</div>
         <h1>Актуальная информация по очереди</h1>
         <p>Данные обновляются при каждом открытии страницы и показывают текущее состояние заявки.</p>

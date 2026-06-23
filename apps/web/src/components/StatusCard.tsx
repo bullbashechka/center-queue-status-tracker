@@ -28,6 +28,28 @@ export function StatusCard({ status }: StatusCardProps) {
       <div className="eyebrow">Персональный статус</div>
       <h2>{status.fullName}</h2>
 
+      {status.status === "enrolled" ? (
+        <div className="enrolled-banner" role="status">
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12.5l4 4 10-11" />
+          </svg>
+          <div>
+            <strong>Ребёнок зачислен</strong>
+            <p>Поздравляем! Заявка дошла до финального этапа.</p>
+          </div>
+        </div>
+      ) : null}
+
       <ol className="timeline">
         {childStatusValues.map((value) => {
           const currentIndex = childStatusValues.indexOf(status.status);
@@ -37,8 +59,26 @@ export function StatusCard({ status }: StatusCardProps) {
 
           return (
             <li key={value} className={`timeline-item timeline-item--${state}`}>
-              <span className="timeline-dot" />
+              <span className="timeline-marker" aria-hidden="true">
+                {state === "done" ? (
+                  <svg
+                    viewBox="0 0 16 16"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3.5 8.5l3 3 6-7" />
+                  </svg>
+                ) : null}
+              </span>
               <span>{childStatusLabels[value]}</span>
+              <span className="timeline-state-label">
+                {state === "done" ? "Пройдено" : state === "current" ? "Сейчас" : "Ожидается"}
+              </span>
             </li>
           );
         })}

@@ -164,9 +164,21 @@ export function AdminListPage() {
           <p>Получаем актуальные данные очереди.</p>
         </section>
       ) : items.length === 0 ? (
-        <section className="panel">
-          <h2>Ничего не найдено</h2>
-          <p>Проверьте ФИО, ИИН или телефон и попробуйте изменить фильтр.</p>
+        <section className="panel empty-state">
+          {query || status ? (
+            <>
+              <h2>Ничего не найдено</h2>
+              <p>Проверьте ФИО, ИИН или телефон и измените фильтр.</p>
+            </>
+          ) : (
+            <>
+              <h2>В очереди пока нет детей</h2>
+              <p>Добавьте первого ребёнка, чтобы начать вести очередь.</p>
+              <Link className="accent-button" to="/admin/children/new">
+                Добавить ребёнка
+              </Link>
+            </>
+          )}
         </section>
       ) : (
         <section className="admin-list">

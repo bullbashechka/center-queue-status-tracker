@@ -46,7 +46,7 @@ export function registerPublicRoutes(app: Hono<AppEnv>, db: AppDb) {
       c.header("Retry-After", String(limit.retryAfterSeconds));
       return c.json(
         {
-          message: `Слишком много попыток поиска. Попробуйте через ~${minutes} мин. или откройте персональную ссылку из СМС.`
+          message: `Слишком много попыток поиска. Попробуйте через ~${minutes} мин. или откройте персональную ссылку из сообщения.`
         },
         429
       );

@@ -31,7 +31,10 @@ export function createApp(db: AppDb) {
   registerAuthRoutes(app, db);
   registerPublicRoutes(app, db);
   registerAdminRoutes(app, db);
-  registerDevRoutes(app, db);
+
+  if (config.ENABLE_DEV_ROUTES) {
+    registerDevRoutes(app, db);
+  }
 
   app.notFound((c) => c.json({ message: "Маршрут не найден" }, 404));
 
