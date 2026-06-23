@@ -5,8 +5,8 @@ build/
 .turbo/
 coverage/
 *.tsbuildinfo
-data/*.db
-data/*.db-*
+**/data/*.db
+**/data/*.db-*
 .env
 *.log
 
