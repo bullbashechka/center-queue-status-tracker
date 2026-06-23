@@ -513,22 +513,22 @@ textarea {
   top: 16px;
   right: 16px;
   z-index: 10;
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  border: 1px solid #c4dae1;
-  background: #fbfeff;
-  color: #14546a;
-  box-shadow: 0 10px 20px rgba(20, 84, 106, 0.1);
+  border: none;
+  background: #f2785c;
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(242, 120, 92, 0.32);
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .admin-entry-link:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 26px rgba(20, 84, 106, 0.16);
+  box-shadow: 0 16px 30px rgba(242, 120, 92, 0.42);
 }
 
 .admin-auth-shell {
@@ -577,7 +577,7 @@ textarea {
   .admin-entry-link {
     top: 10px;
     right: 10px;
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
   }
 }
