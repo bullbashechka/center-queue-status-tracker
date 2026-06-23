@@ -79,6 +79,20 @@ textarea {
   min-height: 220px;
 }
 
+.hero--compact {
+  padding: 22px 28px;
+}
+
+.hero--compact h1 {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+}
+
+.empty-state {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
 .hero h1,
 .panel h1,
 .panel h2 {
@@ -681,6 +695,10 @@ textarea {
   .hero,
   .panel {
     padding: 22px;
+  }
+
+  .hero--compact {
+    padding: 18px;
   }
 
   .grid,
