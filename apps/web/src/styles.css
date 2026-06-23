@@ -1,6 +1,27 @@
 :root {
+  --color-brand: #2ba8c9; /* бирюза: шапка, фоновые акценты, активная точка, рамки */
+  --color-primary: #14546a; /* тёмно-синий: кнопки, ссылки, заголовки (8.4:1 на белом) */
+  --color-primary-hover: #0e3f50;
+  --color-accent: #f2785c; /* коралл PRD: нетекстовые акценты (иконка входа) */
+  --color-accent-cta: #be5038; /* затемнённый коралл для CTA-заливки + белый текст (≥4.5:1) */
+  --color-accent-cta-hover: #a7442f;
+  --color-success: #3dae6b; /* пройденный этап */
+  --color-in-progress: #5b9bd5; /* текущий этап */
+  --color-enrolled: #2ba8c9; /* финал «Зачислен» */
+  --color-warning-ink: #855413; /* текст предупреждения на белом (≥4.5:1) */
+  --color-warning-surface: #fbf1dc; /* фон янтарного блока */
+  --color-warning-accent: #e0a33e; /* иконка/рамка предупреждения (PRD янтарный, крупн.) */
+  --color-danger: #b3503c; /* техническая ошибка */
+  --color-text: #2e3a40; /* основной текст (~11:1 на белом) */
+  --color-text-muted: #566a72; /* второстепенный (≥4.5:1 на белом) */
+  --color-bg: #f5fafb;
+  --color-surface: #ffffff;
+  --color-border: #e2ebee;
+  --color-focus: #14546a;
+  --radius: 8px;
+
   font-family: "Manrope", "Segoe UI", sans-serif;
-  color: #173847;
+  color: var(--color-text);
   background:
     radial-gradient(circle at top left, rgba(43, 168, 201, 0.26), transparent 36%),
     radial-gradient(circle at bottom right, rgba(242, 120, 92, 0.14), transparent 32%),
@@ -21,6 +42,12 @@ body {
 
 a {
   color: inherit;
+}
+
+:where(a, button, input, select, textarea, [role="tab"]):focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius);
 }
 
 button,
@@ -140,28 +167,47 @@ textarea {
 
 .search-form button,
 .accent-button,
+.primary-button,
 .ghost-button,
 .admin-filters button {
   min-height: 52px;
   border: none;
-  border-radius: 8px;
-  background: #f2785c;
-  color: #fff;
+  border-radius: var(--radius);
   cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease;
-  box-shadow: 0 12px 24px rgba(242, 120, 92, 0.22);
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+/* Коралловый CTA: «Найти», «Войти», «Добавить ребёнка», «Скопировать текст сообщения» */
+.search-form button,
+.accent-button {
+  background: var(--color-accent-cta);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(190, 80, 56, 0.22);
 }
 
 .search-form button:hover,
-.accent-button:hover,
-.ghost-button:hover,
+.accent-button:hover {
+  background: var(--color-accent-cta-hover);
+  transform: translateY(-1px);
+}
+
+/* Тёмно-синяя первичная: «Сохранить», «Перевести в…», фильтр «Найти» */
+.primary-button,
+.admin-filters button {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(20, 84, 106, 0.18);
+}
+
+.primary-button:hover,
 .admin-filters button:hover {
+  background: var(--color-primary-hover);
   transform: translateY(-1px);
 }
 
 .search-form button:disabled,
 .accent-button:disabled,
-.ghost-button:disabled,
+.primary-button:disabled,
 .admin-filters button:disabled {
   opacity: 0.7;
   cursor: progress;
@@ -169,6 +215,7 @@ textarea {
 }
 
 .accent-button,
+.primary-button,
 .ghost-button {
   display: inline-flex;
   align-items: center;
@@ -178,9 +225,9 @@ textarea {
 }
 
 .ghost-button {
-  border: 1px solid #c4dae1;
-  background: #fbfeff;
-  color: #14546a;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-primary);
   box-shadow: none;
 }
 
@@ -579,5 +626,20 @@ textarea {
     right: 10px;
     width: 46px;
     height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .timeline-item--current .timeline-dot {
+    box-shadow: none;
   }
 }

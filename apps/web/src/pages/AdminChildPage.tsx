@@ -449,7 +449,7 @@ export function AdminChildPage() {
               }
             />
 
-            <button type="submit" className="accent-button" disabled={isSaving}>
+            <button type="submit" className="primary-button" disabled={isSaving}>
               {isSaving ? "Сохраняем..." : isCreateMode ? "Создать запись" : "Сохранить изменения"}
             </button>
           </form>
@@ -475,7 +475,7 @@ export function AdminChildPage() {
               {nextStatus ? (
                 <button
                   type="button"
-                  className="accent-button"
+                  className="primary-button"
                   disabled={isSaving}
                   onClick={() => void handleStatusChange(nextStatus)}
                 >
@@ -546,7 +546,7 @@ export function AdminChildPage() {
 
             <button
               type="button"
-              className="ghost-button"
+              className="accent-button"
               disabled={!child.lastNotificationMessage}
               onClick={() =>
                 child.lastNotificationMessage &&
