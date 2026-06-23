@@ -6,7 +6,11 @@ const envSchema = z.object({
   PUBLIC_APP_URL: z.string().url().default("http://localhost:5173"),
   API_PORT: z.coerce.number().int().positive().default(3001),
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET должен быть не короче 32 символов."),
-  SESSION_COOKIE_NAME: z.string().min(1).default("queue_admin_session")
+  SESSION_COOKIE_NAME: z.string().min(1).default("queue_admin_session"),
+  ENABLE_DEV_ROUTES: z
+    .string()
+    .optional()
+    .transform((value) => value === "true")
 });
 
 export type AppConfig = z.infer<typeof envSchema>;
@@ -19,4 +23,8 @@ export function getConfig(): AppConfig {
   }
 
   return cachedConfig;
+}
+
+export function resetConfigCache(): void {
+  cachedConfig = undefined;
 }
