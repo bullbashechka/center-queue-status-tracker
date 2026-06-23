@@ -248,6 +248,48 @@ textarea {
   opacity: 1;
 }
 
+.result-block {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+}
+
+.result-block strong {
+  display: block;
+  color: var(--color-text);
+}
+
+.result-block p {
+  margin: 4px 0 0;
+  color: var(--color-text);
+}
+
+.result-block--warning {
+  background: var(--color-warning-surface);
+  border-color: var(--color-warning-accent);
+}
+
+.result-block--danger {
+  background: rgba(179, 80, 60, 0.08);
+  border-color: var(--color-danger);
+}
+
+.result-icon {
+  flex: 0 0 auto;
+}
+
+.result-icon--warning {
+  color: var(--color-warning-ink);
+}
+
+.result-icon--danger {
+  color: var(--color-danger);
+}
+
 .timeline {
   list-style: none;
   padding: 0;
