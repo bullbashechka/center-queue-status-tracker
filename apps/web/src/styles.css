@@ -260,24 +260,66 @@ textarea {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #4d6771;
+  color: var(--color-text-muted);
 }
 
-.timeline-dot {
-  width: 14px;
-  height: 14px;
+.timeline-marker {
+  width: 22px;
+  height: 22px;
   border-radius: 999px;
-  background: #c2d6dc;
+  border: 2px solid var(--color-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
   flex: 0 0 auto;
 }
 
-.timeline-item--done .timeline-dot {
-  background: #3dae6b;
+.timeline-item--done .timeline-marker {
+  background: var(--color-success);
+  border-color: var(--color-success);
 }
 
-.timeline-item--current .timeline-dot {
-  background: #2ba8c9;
-  box-shadow: 0 0 0 6px rgba(43, 168, 201, 0.18);
+.timeline-item--current .timeline-marker {
+  background: var(--color-in-progress);
+  border-color: var(--color-in-progress);
+}
+
+.timeline-item--current {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.timeline-state-label {
+  margin-left: auto;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.enrolled-banner {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin: 0 0 20px;
+  padding: 18px 20px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(43, 168, 201, 0.16), rgba(43, 168, 201, 0.06));
+  border: 1px solid var(--color-enrolled);
+  color: var(--color-primary);
+}
+
+.enrolled-banner svg {
+  color: var(--color-enrolled);
+  flex: 0 0 auto;
+}
+
+.enrolled-banner strong {
+  display: block;
+}
+
+.enrolled-banner p {
+  margin: 4px 0 0;
+  color: var(--color-text);
 }
 
 .queue-summary {
@@ -637,9 +679,5 @@ textarea {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-
-  .timeline-item--current .timeline-dot {
-    box-shadow: none;
   }
 }
